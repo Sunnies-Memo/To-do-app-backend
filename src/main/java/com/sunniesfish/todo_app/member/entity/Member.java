@@ -1,2 +1,4 @@
-package com.sunniesfish.todo_app.member.entity;public class Member {
+package com.sunniesfish.todo_app.member.entity;
+
+public class Member {
 }
