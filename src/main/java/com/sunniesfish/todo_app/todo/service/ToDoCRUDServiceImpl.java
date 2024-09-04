@@ -16,26 +16,36 @@ public class ToDoCRUDServiceImpl implements ToDoCRUDService {
 
     @Override
     public ToDo create(ToDo entity) {
-        return null;
+        return toDoRepository.save(entity);
     }
 
     @Override
     public Optional<ToDo> findById(Long aLong) {
-        return Optional.empty();
+        return toDoRepository.findById(aLong);
     }
 
     @Override
     public List<ToDo> findAll() {
-        return List.of();
+        return toDoRepository.findAll();
     }
 
     @Override
     public ToDo update(Long aLong, ToDo entity) {
-        return null;
+        return toDoRepository.save(entity);
     }
 
     @Override
     public void delete(Long aLong) {
+        toDoRepository.deleteById(aLong);
+    }
 
+    @Override
+    public List<ToDo> getAllToDosByBoardId(Long boardId) {
+        return toDoRepository.findByBoard_BoardIdOrderByIndexAsc(boardId);
+    }
+
+    @Override
+    public void deleteAllToDoByBoardId(Long boardId) {
+        toDoRepository.deleteAllByBoard_BoardId(boardId);
     }
 }

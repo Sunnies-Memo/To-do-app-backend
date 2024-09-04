@@ -15,9 +15,17 @@ import lombok.NoArgsConstructor;
 public class ToDo {
 
     @Id
+    @Column(name = "todo_id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long todoId;
 
     @Column(nullable = false)
-    private String content;
+    private long index;
+
+    @Column(nullable = false)
+    private String text;
+
+    @ManyToOne
+    @JoinColumn(name = "board_id")
+    private Board board;
 }

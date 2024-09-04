@@ -1,5 +1,6 @@
 package com.sunniesfish.todo_app.todo.entity;
 
+import com.sunniesfish.todo_app.member.entity.Member;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -15,6 +16,7 @@ import lombok.NoArgsConstructor;
 public class Board {
 
     @Id
+    @Column(name = "board_id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long boardId;
 

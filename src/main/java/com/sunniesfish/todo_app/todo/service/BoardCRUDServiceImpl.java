@@ -16,26 +16,36 @@ public class BoardCRUDServiceImpl implements BoardCRUDService {
 
     @Override
     public Board create(Board entity) {
-        return null;
+        return boardRepository.save(entity);
     }
 
     @Override
     public Optional<Board> findById(Long aLong) {
-        return Optional.empty();
+        return boardRepository.findById(aLong);
     }
 
     @Override
     public List<Board> findAll() {
-        return List.of();
+        return boardRepository.findAll();
     }
 
     @Override
     public Board update(Long aLong, Board entity) {
-        return null;
+        return boardRepository.save(entity);
     }
 
     @Override
     public void delete(Long aLong) {
+        boardRepository.deleteById(aLong);
+    }
+
+    @Override
+    public List<Board> getBoardsByMemberId(Long memberId) {
+        return boardRepository.findAllByBoardId(memberId);
+    }
+
+    @Override
+    public void deleteAllBoardsByMemberId(Long memberId) {
 
     }
 }
