@@ -1,6 +1,8 @@
 package com.sunniesfish.todo_app.todo.controller;
 
+import com.sunniesfish.todo_app.todo.dto.BoardUpdateRequest;
 import com.sunniesfish.todo_app.todo.dto.BoardsDTO;
+import com.sunniesfish.todo_app.todo.dto.ToDoUpdateRequest;
 import com.sunniesfish.todo_app.todo.entity.Board;
 import com.sunniesfish.todo_app.todo.entity.ToDo;
 import com.sunniesfish.todo_app.todo.service.BoardCRUDService;
@@ -37,23 +39,46 @@ public class ToDoController {
     @PostMapping("")
     public ResponseEntity createBoard(@RequestBody Board board) {
         try {
-            boardCRUDService.create(board);
-            return new ResponseEntity<>(HttpStatus.CREATED);
+            long memberId = 1L;
+            if(memberId==board.getMemberId()){
+                boardCRUDService.create(board);
+                return new ResponseEntity<>(HttpStatus.CREATED);
+            }  else  {
+                return new ResponseEntity<>(HttpStatus.LOCKED);
+            }
         } catch (Exception e) {
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
     @PutMapping("")
-    public ResponseEntity updateBoard(@RequestBody Board board) {
-        return null;
+    public ResponseEntity updateBoard(@RequestBody BoardUpdateRequest boardUpdateRequest) {
+        try {
+            long memberId = 1L;
+            if(memberId==boardUpdateRequest.getBoard().getMemberId()){
+                boardCRUDService.update(
+                        boardUpdateRequest.getBoard().getBoardId(),
+                        boardUpdateRequest.getBoard()
+                );
+                return new ResponseEntity<>(HttpStatus.OK);
+            } else {
+                return new ResponseEntity<>(HttpStatus.LOCKED);
+            }
+        } catch (Exception e) {
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
     }
 
     @DeleteMapping("")
     public ResponseEntity deleteBoard(@RequestBody Board board) {
         try {
-            toDoService.deleteBoardById(board.getBoardId());
-            return new ResponseEntity<>(HttpStatus.OK);
+            long memberId = 1L;
+            if(memberId==board.getMemberId()){
+                toDoService.deleteBoardById(board.getBoardId());
+                return new ResponseEntity<>(HttpStatus.OK);
+            } else {
+                return new ResponseEntity<>(HttpStatus.LOCKED);
+            }
         } catch (Exception e) {
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
@@ -62,6 +87,8 @@ public class ToDoController {
     @PostMapping("/todo")
     public ResponseEntity<ToDo> createToDo(@RequestBody ToDo toDo) {
         try {
+            long memberId = 1L;
+            //memberId 존재 여부 확인 로직
             toDoCRUDService.create(toDo);
             return new ResponseEntity<>(HttpStatus.CREATED);
         } catch (Exception e) {
@@ -70,13 +97,24 @@ public class ToDoController {
     }
 
     @PutMapping("/todo")
-    public ResponseEntity<ToDo> updateToDo(@RequestBody ToDo toDo) {
-        return null;
+    public ResponseEntity<ToDo> updateToDo(@RequestBody ToDoUpdateRequest toDoUpdateRequest) {
+        try {
+            long memberId = 1L;
+            toDoCRUDService.update(
+                    toDoUpdateRequest.getTodo().getTodoId(),
+                    toDoUpdateRequest.getTodo()
+            );
+            return new ResponseEntity<>(HttpStatus.CREATED);
+        } catch (Exception e) {
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
     }
 
     @DeleteMapping("/todo")
     public ResponseEntity<ToDo> deleteToDo(@RequestBody ToDo toDo) {
         try {
+            long memberId = 1L;
+            //memberId 존재 여부 확인 로직
             toDoCRUDService.delete(toDo.getTodoId());
             return new ResponseEntity<>(HttpStatus.OK);
         } catch (Exception e) {

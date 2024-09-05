@@ -1,14 +1,10 @@
 package com.sunniesfish.todo_app.todo.entity;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 @Entity
-@Builder
-@Getter
+@Data
 @Table(name = "todo")
 @NoArgsConstructor
 @AllArgsConstructor
@@ -20,7 +16,7 @@ public class ToDo {
     private long todoId;
 
     @Column(nullable = false)
-    private long index;
+    private long orderIndex;
 
     @Column(nullable = false)
     private String text;

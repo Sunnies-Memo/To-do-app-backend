@@ -2,14 +2,10 @@ package com.sunniesfish.todo_app.todo.entity;
 
 import com.sunniesfish.todo_app.member.entity.Member;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 @Entity
-@Builder
-@Getter
+@Data
 @Table(name = "board")
 @NoArgsConstructor
 @AllArgsConstructor
@@ -21,5 +17,11 @@ public class Board {
     private long boardId;
 
     @Column(nullable = false)
+    private long orderIndex;
+
+    @Column(nullable = false)
     private String title;
+
+    @Column(nullable = false)
+    private long memberId;
 }
