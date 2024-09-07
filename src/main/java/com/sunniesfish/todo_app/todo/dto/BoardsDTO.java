@@ -12,6 +12,7 @@ import java.util.List;
 @NoArgsConstructor
 public class BoardsDTO {
     private long boardId;
+    private long memberId;
     private long orderIndex;
     private String title;
     private List<ToDo> toDoList;

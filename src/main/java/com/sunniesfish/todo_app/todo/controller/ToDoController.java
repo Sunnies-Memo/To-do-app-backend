@@ -41,8 +41,7 @@ public class ToDoController {
         try {
             long memberId = 1L;
             if(memberId==board.getMemberId()){
-                boardCRUDService.create(board);
-                return new ResponseEntity<>(HttpStatus.CREATED);
+                return new ResponseEntity<>(boardCRUDService.create(board),HttpStatus.CREATED);
             }  else  {
                 return new ResponseEntity<>(HttpStatus.LOCKED);
             }
@@ -53,14 +52,18 @@ public class ToDoController {
 
     @PutMapping("")
     public ResponseEntity updateBoard(@RequestBody BoardUpdateRequest boardUpdateRequest) {
+        System.out.println("updateBoard");
         try {
             long memberId = 1L;
+            System.out.println("board memberId: "+boardUpdateRequest.getBoard().getMemberId());
+            System.out.println("board order index: "+boardUpdateRequest.getBoard().getOrderIndex());
             if(memberId==boardUpdateRequest.getBoard().getMemberId()){
-                boardCRUDService.update(
+
+
+                return new ResponseEntity<>(boardCRUDService.update(
                         boardUpdateRequest.getBoard().getBoardId(),
                         boardUpdateRequest.getBoard()
-                );
-                return new ResponseEntity<>(HttpStatus.OK);
+                ),HttpStatus.OK);
             } else {
                 return new ResponseEntity<>(HttpStatus.LOCKED);
             }
@@ -74,6 +77,7 @@ public class ToDoController {
         try {
             long memberId = 1L;
             if(memberId==board.getMemberId()){
+                System.out.println("delete board");
                 toDoService.deleteBoardById(board.getBoardId());
                 return new ResponseEntity<>(HttpStatus.OK);
             } else {
@@ -97,14 +101,15 @@ public class ToDoController {
     }
 
     @PutMapping("/todo")
-    public ResponseEntity<ToDo> updateToDo(@RequestBody ToDoUpdateRequest toDoUpdateRequest) {
+    public ResponseEntity<ToDo> moveToDo(@RequestBody ToDoUpdateRequest toDoUpdateRequest) {
         try {
             long memberId = 1L;
-            toDoCRUDService.update(
-                    toDoUpdateRequest.getTodo().getTodoId(),
-                    toDoUpdateRequest.getTodo()
-            );
-            return new ResponseEntity<>(HttpStatus.CREATED);
+            System.out.println("todo boardId : "+toDoUpdateRequest.getTodo().getBoard().getBoardId());
+
+            return new ResponseEntity<>(toDoCRUDService.update(
+                                                toDoUpdateRequest.getTodo().getTodoId(),
+                                                toDoUpdateRequest.getTodo()
+                                        ),HttpStatus.CREATED);
         } catch (Exception e) {
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }

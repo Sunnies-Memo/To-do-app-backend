@@ -51,6 +51,11 @@ public class ToDoCRUDServiceImpl implements ToDoCRUDService {
         return toDoRepository.findByBoard_BoardIdOrderByOrderIndexAsc(boardId);
     }
 
+    @Override
+    public Optional<ToDo> getLastTodoByBoardId(Long boardId) {
+        return Optional.empty();
+    }
+
     @Transactional
     @Override
     public void deleteAllToDoByBoardId(Long boardId) {

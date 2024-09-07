@@ -51,6 +51,11 @@ public class BoardCRUDServiceImpl implements BoardCRUDService {
         return boardRepository.findAllByMemberIdOrderByOrderIndexAsc(memberId);
     }
 
+    @Override
+    public Optional<Board> getLastBoardByMemberId(Long memberId) {
+        return boardRepository.findByMemberIdOrderByOrderIndexDesc(memberId);
+    }
+
     @Transactional
     @Override
     public void deleteAllBoardsByMemberId(Long memberId) {
