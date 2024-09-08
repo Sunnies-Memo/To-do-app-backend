@@ -60,10 +60,10 @@ public class ToDoController {
             if(memberId==boardUpdateRequest.getBoard().getMemberId()){
 
 
-                return new ResponseEntity<>(boardCRUDService.update(
-                        boardUpdateRequest.getBoard().getBoardId(),
-                        boardUpdateRequest.getBoard()
-                ),HttpStatus.OK);
+                return new ResponseEntity<>(
+                        toDoService.updateBoard(memberId, boardUpdateRequest),
+                        HttpStatus.OK
+                );
             } else {
                 return new ResponseEntity<>(HttpStatus.LOCKED);
             }
@@ -93,8 +93,7 @@ public class ToDoController {
         try {
             long memberId = 1L;
             //memberId 존재 여부 확인 로직
-            toDoCRUDService.create(toDo);
-            return new ResponseEntity<>(HttpStatus.CREATED);
+            return new ResponseEntity<>(toDoCRUDService.create(toDo),HttpStatus.CREATED);
         } catch (Exception e) {
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
@@ -106,10 +105,10 @@ public class ToDoController {
             long memberId = 1L;
             System.out.println("todo boardId : "+toDoUpdateRequest.getTodo().getBoard().getBoardId());
 
-            return new ResponseEntity<>(toDoCRUDService.update(
-                                                toDoUpdateRequest.getTodo().getTodoId(),
-                                                toDoUpdateRequest.getTodo()
-                                        ),HttpStatus.CREATED);
+            return new ResponseEntity<>(
+                    toDoService.updateToDo(memberId, toDoUpdateRequest),
+                    HttpStatus.OK
+            );
         } catch (Exception e) {
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
