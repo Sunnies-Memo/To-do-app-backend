@@ -9,7 +9,6 @@ import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -45,11 +44,8 @@ public class ToDoService {
 
     @Transactional
     public void deleteBoardById(long boardId){
-        System.out.println("Delete Board by id: " + boardId);
         toDoCRUDService.deleteAllToDoByBoardId(boardId);
-        System.out.println("deleting ToDoS");
         boardCRUDService.delete(boardId);
-        System.out.println("deleting Board");
     }
 
 
