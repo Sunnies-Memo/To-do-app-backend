@@ -1,4 +1,4 @@
-package com.sunniesfish.todo_app.member.entity;
+package com.sunniesfish.todo_app.auth.entity;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;

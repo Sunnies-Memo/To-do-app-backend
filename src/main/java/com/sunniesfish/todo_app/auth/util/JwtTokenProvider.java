@@ -1,4 +1,4 @@
-package com.sunniesfish.todo_app.global.util;
+package com.sunniesfish.todo_app.auth.util;
 
 import org.springframework.stereotype.Component;
 
