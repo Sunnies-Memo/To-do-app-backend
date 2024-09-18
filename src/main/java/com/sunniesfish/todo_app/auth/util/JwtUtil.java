@@ -1,5 +1,6 @@
 package com.sunniesfish.todo_app.auth.util;
 
+import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
@@ -11,6 +12,9 @@ import org.springframework.stereotype.Component;
 import javax.crypto.SecretKey;
 import java.security.Key;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.function.Function;
 
 @Component
 public class JwtUtil {
@@ -44,7 +48,9 @@ public class JwtUtil {
     public String generateRefreshToken(String username) {
         // 7일
         long REFRESH_TOKEN_EXPIRATION = 1000 * 60 * 60 * 24 * 7;
+        Map<String , Object> claims = new HashMap<>();
         return Jwts.builder()
+                .setClaims(claims)
                 .setSubject(username)
                 .setIssuedAt(new Date())
                 .setExpiration(new Date(System.currentTimeMillis() + REFRESH_TOKEN_EXPIRATION))
@@ -52,35 +58,52 @@ public class JwtUtil {
                 .compact();
     }
 
-    public String getUsernameFromToken(String token, Boolean isAccessToken) {
-        String secretKey = isAccessToken ? ACCESS_TOKEN_SECRET :REFRESH_TOKEN_SECRET;
+    public String extractUsername(String token, String key) {
+        return extractClaim(token, Claims::getSubject, key);
+    }
+
+    public String getUsernameFormAccessToken(String token) {
+        return extractUsername(token, ACCESS_TOKEN_SECRET);
+    }
+    public String getUsernameFormRefreshToken(String token) {
+        return extractUsername(token, REFRESH_TOKEN_SECRET);
+    }
+
+    public Date extractExpiration(String token, String key) {
+        return extractClaim(token, Claims::getExpiration, key);
+    }
+
+    public <T> T extractClaim(String token, Function<Claims, T> claimsResolver, String key) {
+        final Claims claims = extractAllClaims(token, key);
+        return claimsResolver.apply(claims);
+    }
+
+    private Claims extractAllClaims(String token, String key) {
         return Jwts.parserBuilder()
-                .setSigningKey(generateSecretKey(secretKey))
+                .setSigningKey(generateSecretKey(key))
                 .build()
                 .parseClaimsJwt(token)
-                .getBody()
-                .getSubject();
+                .getBody();
+    }
+
+    private Boolean isTokenExpired(String token, String key) {
+        return extractExpiration(token, key).before(new Date());
     }
 
     //Access Token 유효성 검증
-    public boolean validateAccessToken(String token) {
-        return validateToken(token, ACCESS_TOKEN_SECRET);
+    public boolean validateAccessToken(String token, String username) {
+        return validateToken(token, ACCESS_TOKEN_SECRET, username);
     }
     
     //Refresh Token 유효성 검증
-    public boolean validateRefreshToken(String token) {
-        return validateToken(token, REFRESH_TOKEN_SECRET);
+    public boolean validateRefreshToken(String token, String username) {
+        return validateToken(token, REFRESH_TOKEN_SECRET, username);
     }
 
-    private boolean validateToken(String token, String key) {
-        try {
-            Jwts.parserBuilder()
-                    .setSigningKey(generateSecretKey(key))
-                    .build()
-                    .parseClaimsJws(token);
-            return true;
-        } catch (JwtException  | IllegalArgumentException e) {
-            return false;
-        }
+    private boolean validateToken(String token, String key, String username) {
+
+        final String tokenUsername = extractUsername(token, key);
+        return (tokenUsername.equals(username) && isTokenExpired(token, key));
+
     }
 }

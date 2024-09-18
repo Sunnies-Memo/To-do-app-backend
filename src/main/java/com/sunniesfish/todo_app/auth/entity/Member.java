@@ -1,10 +1,7 @@
 package com.sunniesfish.todo_app.auth.entity;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 @Entity
 @Builder
@@ -14,10 +11,17 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class Member {
 
+
     @Id
     @Column(nullable = false, unique = true)
-    private String memberId;
+    private String username;
 
     @Column(nullable = false)
     private String password;
+
+    @Column(nullable = true)
+    private String profileImg;
+
+    @Column(nullable = true)
+    private String bgImg;
 }
