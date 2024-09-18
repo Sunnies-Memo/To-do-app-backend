@@ -13,12 +13,12 @@ import java.security.Key;
 import java.util.Date;
 
 @Component
-public class JwtTokenProvider {
+public class JwtUtil {
 
     private final String ACCESS_TOKEN_SECRET;
     private final String REFRESH_TOKEN_SECRET;
 
-    public JwtTokenProvider(
+    public JwtUtil(
             @Value("${jwt.secret.access}") String accessTokenSecret,
             @Value("${jwt.secret.refresh}") String refreshTokenSecret
     ) {
