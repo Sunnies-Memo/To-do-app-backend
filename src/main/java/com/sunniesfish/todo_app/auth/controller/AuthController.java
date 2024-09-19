@@ -16,13 +16,11 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/auth")
+@CrossOrigin
 @AllArgsConstructor
 public class AuthController {
     private final JwtUtil jwtUtil;
@@ -33,14 +31,17 @@ public class AuthController {
     @PostMapping("/login")
     public ResponseEntity login(@RequestBody AuthRequest authRequest, HttpServletResponse response) {
         try {
-
+            System.out.println("in login");
             Authentication authentication = authenticationManager.authenticate(
                     new UsernamePasswordAuthenticationToken(authRequest.getUsername(), authRequest.getPassword())
             );
+            System.out.println("== authenticated");
             UserDetails userDetails = userDetailsService.loadUserByUsername(authRequest.getUsername());
 
+            System.out.println("userdetail : "+ userDetails.getUsername());
             AuthResponse tokens = authService.getTokens(userDetails);
 
+            System.out.println("getting tokens : "+ tokens.getAccessToken());
             Cookie refreshTokenCookie = new Cookie("refresh_token", tokens.getRefreshToken());
             refreshTokenCookie.setHttpOnly(true);
             refreshTokenCookie.setSecure(true);
@@ -80,9 +81,10 @@ public class AuthController {
 
     @PostMapping("/register")
     public ResponseEntity register(@RequestBody RegisterRequest registerRequest) {
+        System.out.println("registerRequest: " + registerRequest);
         try {
             authService.register(registerRequest);
-            return ResponseEntity.ok().body("Success");
+            return new ResponseEntity(HttpStatus.CREATED);
         } catch (RuntimeException e) {
             return ResponseEntity.badRequest().body(e.getMessage());
         }

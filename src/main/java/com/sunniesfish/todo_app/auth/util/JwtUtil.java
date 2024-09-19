@@ -31,7 +31,10 @@ public class JwtUtil {
     }
 
     private SecretKey generateSecretKey(String secret) {
+        System.out.println("generate secret key");
+        System.out.println("secret: " + secret);
         return Keys.hmacShaKeyFor(Decoders.BASE64.decode(secret));
+
     }
 
     public String generateAccessToken(String username) {
