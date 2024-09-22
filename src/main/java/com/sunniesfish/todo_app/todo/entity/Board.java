@@ -1,5 +1,6 @@
 package com.sunniesfish.todo_app.todo.entity;
 
+import com.sunniesfish.todo_app.auth.entity.Member;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -22,5 +23,5 @@ public class Board {
     private String title;
 
     @Column(nullable = false)
-    private long memberId;
+    private String username;
 }

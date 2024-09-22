@@ -47,18 +47,19 @@ public class BoardCRUDServiceImpl implements BoardCRUDService {
 
     @Transactional
     @Override
-    public List<Board> getBoardsByMemberId(Long memberId) {
-        return boardRepository.findAllByMemberIdOrderByOrderIndexAsc(memberId);
-    }
-
-    @Override
-    public Optional<Board> getLastBoardByMemberId(Long memberId) {
-        return boardRepository.findByMemberIdOrderByOrderIndexDesc(memberId);
+    public List<Board> getBoardsByUsername(String username) {
+        return boardRepository.findAllByUsernameOrderByOrderIndexAsc(username);
     }
 
     @Transactional
     @Override
-    public void deleteAllBoardsByMemberId(Long memberId) {
+    public Optional<Board> getLastBoardByUsername(String username) {
+        return boardRepository.findByUsernameOrderByOrderIndexDesc(username);
+    }
 
+    @Transactional
+    @Override
+    public void deleteAllBoardsByUsername(String username) {
+        boardRepository.deleteAllByUsername(username);
     }
 }

@@ -26,13 +26,13 @@ public class ToDoService {
     private EntityManager entityManager;
 
     @Transactional
-    public List<BoardsDTO> getAllBoards(long memberId){
+    public List<BoardsDTO> getAllBoards(String username){
         List<BoardsDTO> list = new ArrayList<>();
-        boardCRUDService.getBoardsByMemberId(memberId).forEach(board -> {
+        boardCRUDService.getBoardsByUsername(username).forEach(board -> {
             BoardsDTO boardsDTO = new BoardsDTO();
             boardsDTO.setBoardId(board.getBoardId());
             boardsDTO.setTitle(board.getTitle());
-            boardsDTO.setMemberId(board.getMemberId());
+            boardsDTO.setUsername(board.getUsername());
             boardsDTO.setOrderIndex(board.getOrderIndex());
             boardsDTO.setToDoList(
                     toDoCRUDService.getAllToDosByBoardId(board.getBoardId())
@@ -50,18 +50,18 @@ public class ToDoService {
 
 
     @Transactional
-    public Board updateBoard(long memberId, BoardUpdateRequest boardUpdateRequest){
+    public Board updateBoard(String username, BoardUpdateRequest boardUpdateRequest){
         Board board = boardCRUDService.update(
                 boardUpdateRequest.getBoard().getBoardId(), boardUpdateRequest.getBoard()
         );
         if(boardUpdateRequest.getGap() <= 2) {
-            rebalanceBoardsIndex(memberId);
+            rebalanceBoardsIndex(username);
         }
         return board;
     }
 
     @Transactional
-    public ToDo updateToDo(long memberId, ToDoUpdateRequest toDoUpdateRequest){
+    public ToDo updateToDo(String username, ToDoUpdateRequest toDoUpdateRequest){
         ToDo todo = toDoCRUDService.update(
                 toDoUpdateRequest.getTodo().getTodoId(), toDoUpdateRequest.getTodo()
         );
@@ -74,8 +74,8 @@ public class ToDoService {
 
 
     @Transactional
-    public void rebalanceBoardsIndex(long memberId){
-        List<Board> boards = boardCRUDService.getBoardsByMemberId(memberId);
+    public void rebalanceBoardsIndex(String username){
+        List<Board> boards = boardCRUDService.getBoardsByUsername(username);
         for(int i = 1; i <= boards.size(); i++){
             Board board = boards.get(i - 1);
             board.setOrderIndex(i * 40L);

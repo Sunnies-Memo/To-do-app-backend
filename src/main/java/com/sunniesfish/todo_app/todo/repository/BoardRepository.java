@@ -8,6 +8,7 @@ import java.util.Optional;
 
 public interface BoardRepository extends JpaRepository<Board, Long> {
 
-    List<Board> findAllByMemberIdOrderByOrderIndexAsc(Long memberId);
-    Optional<Board> findByMemberIdOrderByOrderIndexDesc (Long memberId);
+    List<Board> findAllByUsernameOrderByOrderIndexAsc(String username);
+    Optional<Board> findByUsernameOrderByOrderIndexDesc (String username);
+    void deleteAllByUsername(String username);
 }

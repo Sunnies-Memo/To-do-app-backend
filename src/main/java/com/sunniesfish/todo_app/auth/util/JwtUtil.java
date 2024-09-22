@@ -10,10 +10,9 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import javax.crypto.SecretKey;
+import java.nio.charset.StandardCharsets;
 import java.security.Key;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 import java.util.function.Function;
 
 @Component
@@ -31,21 +30,24 @@ public class JwtUtil {
     }
 
     private SecretKey generateSecretKey(String secret) {
-        System.out.println("generate secret key");
-        System.out.println("secret: " + secret);
-        return Keys.hmacShaKeyFor(Decoders.BASE64.decode(secret));
-
+        return Keys.hmacShaKeyFor(secret.getBytes(StandardCharsets.UTF_8));
     }
 
     public String generateAccessToken(String username) {
         // 1시간
+        System.out.println("generate access token");
         long ACCESS_TOKEN_EXPIRATION = 1000 * 60 * 60;
-        return Jwts.builder()
+        System.out.println("access token expiration: " + ACCESS_TOKEN_EXPIRATION);
+        System.out.println("ACCESS_TOKEN_SECRET: " + ACCESS_TOKEN_SECRET);
+        SecretKey secret = generateSecretKey(ACCESS_TOKEN_SECRET);
+        System.out.println("secret: " + Arrays.toString(secret.getEncoded()));
+        String token = Jwts.builder()
                 .setSubject(username)
                 .setIssuedAt(new Date())
                 .setExpiration(new Date(System.currentTimeMillis() + ACCESS_TOKEN_EXPIRATION))
                 .signWith(generateSecretKey(ACCESS_TOKEN_SECRET), SignatureAlgorithm.HS512)
                 .compact();
+        return token;
     }
 
     public String generateRefreshToken(String username) {
@@ -85,7 +87,7 @@ public class JwtUtil {
         return Jwts.parserBuilder()
                 .setSigningKey(generateSecretKey(key))
                 .build()
-                .parseClaimsJwt(token)
+                .parseClaimsJws(token)
                 .getBody();
     }
 
@@ -106,7 +108,9 @@ public class JwtUtil {
     private boolean validateToken(String token, String key, String username) {
 
         final String tokenUsername = extractUsername(token, key);
-        return (tokenUsername.equals(username) && isTokenExpired(token, key));
+        System.out.println("validate :  tokenUserName:"+tokenUsername+ "  username:"+username);
+        System.out.println( "isToken Expired"+isTokenExpired(token, key));
+        return (tokenUsername.equals(username) && !isTokenExpired(token, key));
 
     }
 }

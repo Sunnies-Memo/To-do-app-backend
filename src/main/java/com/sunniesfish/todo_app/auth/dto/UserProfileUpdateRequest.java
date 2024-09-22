@@ -11,7 +11,9 @@ import org.springframework.web.multipart.MultipartFile;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class ProfileUpdateDTO {
+public class UserProfileUpdateRequest {
+
+    private String username;
 
     @NotBlank
     @Size(min = 7, max = 13, message = "Password must be between 7 and 13 characters")

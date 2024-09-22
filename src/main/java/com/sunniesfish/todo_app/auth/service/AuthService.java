@@ -41,7 +41,7 @@ public class AuthService {
                     Optional<RefreshToken> existingRefreshToken = refreshTokenService.FindRefreshTokenByUsername(userDetails.getUsername());
                     if (existingRefreshToken.isPresent() &&
                             jwtUtil.validateRefreshToken(existingRefreshToken.get().getRefreshToken(), userDetails.getUsername())) {
-                        return new AuthResponse(accessToken, null); // 새 RefreshToken 발급 필요 없음
+                        return new AuthResponse(member,accessToken, null); // 새 RefreshToken 발급 필요 없음
                     }
 
                     //기존 RefreshToken 삭제 후 새로 발급
@@ -55,7 +55,7 @@ public class AuthService {
                     );
 
                     // AccessToken과 새 RefreshToken 반환
-                    return new AuthResponse(accessToken, refreshToken);
+                    return new AuthResponse(member,accessToken, refreshToken);
                 })
                 // 사용자 존재하지 않을 경우 예외 처리
                 .orElseThrow(() -> new UsernameNotFoundException("User not found"));

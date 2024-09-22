@@ -7,7 +7,7 @@ import java.util.List;
 import java.util.Optional;
 
 public interface BoardCRUDService extends CRUDService <Board, Long>{
-    List<Board> getBoardsByMemberId(Long memberId);
-    Optional<Board> getLastBoardByMemberId(Long memberId);
-    void deleteAllBoardsByMemberId(Long memberId);
+    List<Board> getBoardsByUsername(String username);
+    Optional<Board> getLastBoardByUsername(String username);
+    void deleteAllBoardsByUsername(String username);
 }

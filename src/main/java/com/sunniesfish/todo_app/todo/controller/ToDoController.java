@@ -11,6 +11,8 @@ import com.sunniesfish.todo_app.todo.service.ToDoService;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -27,11 +29,12 @@ public class ToDoController {
     @GetMapping("")
     public ResponseEntity getAll() {
         try {
-            long memberId = 1L;
-            List<BoardsDTO> boardsDTOList = toDoService.getAllBoards(memberId);
+            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+            String username = authentication.getName();
+            List<BoardsDTO> boardsDTOList = toDoService.getAllBoards(username);
             return new ResponseEntity<>(boardsDTOList, HttpStatus.OK);
         } catch (Exception e){
-            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+            return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
         }
     }
 
@@ -39,90 +42,86 @@ public class ToDoController {
     @PostMapping("")
     public ResponseEntity createBoard(@RequestBody Board board) {
         try {
-            long memberId = 1L;
-            if(memberId==board.getMemberId()){
+            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+            String username = authentication.getName();
+            if(username.equals(board.getUsername())){
                 return new ResponseEntity<>(boardCRUDService.create(board),HttpStatus.CREATED);
             }  else  {
-                return new ResponseEntity<>(HttpStatus.LOCKED);
+                return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
             }
         } catch (Exception e) {
-            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+            return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
         }
     }
 
     @PutMapping("")
     public ResponseEntity updateBoard(@RequestBody BoardUpdateRequest boardUpdateRequest) {
-        System.out.println("updateBoard");
         try {
-            long memberId = 1L;
-            System.out.println("board memberId: "+boardUpdateRequest.getBoard().getMemberId());
-            System.out.println("board order index: "+boardUpdateRequest.getBoard().getOrderIndex());
-            if(memberId==boardUpdateRequest.getBoard().getMemberId()){
-
-
+            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+            String username = authentication.getName();
+            if(username.equals(boardUpdateRequest.getBoard().getUsername())){
                 return new ResponseEntity<>(
-                        toDoService.updateBoard(memberId, boardUpdateRequest),
+                        toDoService.updateBoard(username, boardUpdateRequest),
                         HttpStatus.OK
                 );
             } else {
-                return new ResponseEntity<>(HttpStatus.LOCKED);
+                return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
             }
         } catch (Exception e) {
-            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+            return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
         }
     }
 
     @DeleteMapping("")
     public ResponseEntity deleteBoard(@RequestBody Board board) {
         try {
-            long memberId = 1L;
-            if(memberId==board.getMemberId()){
-                System.out.println("delete board");
+            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+            String username = authentication.getName();
+            if(username.equals(board.getUsername())){
                 toDoService.deleteBoardById(board.getBoardId());
                 return new ResponseEntity<>(HttpStatus.OK);
             } else {
-                return new ResponseEntity<>(HttpStatus.LOCKED);
+                return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
             }
         } catch (Exception e) {
-            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+            return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
         }
     }
 
     @PostMapping("/todo")
     public ResponseEntity<ToDo> createToDo(@RequestBody ToDo toDo) {
         try {
-            long memberId = 1L;
-            //memberId 존재 여부 확인 로직
+            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+            String username = authentication.getName();
             return new ResponseEntity<>(toDoCRUDService.create(toDo),HttpStatus.CREATED);
         } catch (Exception e) {
-            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+            return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
         }
     }
 
     @PutMapping("/todo")
     public ResponseEntity<ToDo> moveToDo(@RequestBody ToDoUpdateRequest toDoUpdateRequest) {
         try {
-            long memberId = 1L;
-            System.out.println("todo boardId : "+toDoUpdateRequest.getTodo().getBoard().getBoardId());
-
+            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+            String username = authentication.getName();
             return new ResponseEntity<>(
-                    toDoService.updateToDo(memberId, toDoUpdateRequest),
+                    toDoService.updateToDo(username, toDoUpdateRequest),
                     HttpStatus.OK
             );
         } catch (Exception e) {
-            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+            return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
         }
     }
 
     @DeleteMapping("/todo")
     public ResponseEntity<ToDo> deleteToDo(@RequestBody ToDo toDo) {
         try {
-            long memberId = 1L;
-            //memberId 존재 여부 확인 로직
+            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+            String username = authentication.getName();
             toDoCRUDService.delete(toDo.getTodoId());
             return new ResponseEntity<>(HttpStatus.OK);
         } catch (Exception e) {
-            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+            return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
         }
     }
 }

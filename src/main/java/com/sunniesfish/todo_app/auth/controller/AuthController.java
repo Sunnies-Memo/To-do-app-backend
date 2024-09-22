@@ -8,6 +8,7 @@ import com.sunniesfish.todo_app.auth.util.JwtUtil;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -17,6 +18,8 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.Arrays;
 
 @RestController
 @RequestMapping("/api/auth")
@@ -31,30 +34,31 @@ public class AuthController {
     @PostMapping("/login")
     public ResponseEntity login(@RequestBody AuthRequest authRequest, HttpServletResponse response) {
         try {
-            System.out.println("in login");
             Authentication authentication = authenticationManager.authenticate(
                     new UsernamePasswordAuthenticationToken(authRequest.getUsername(), authRequest.getPassword())
             );
-            System.out.println("== authenticated");
+
             UserDetails userDetails = userDetailsService.loadUserByUsername(authRequest.getUsername());
 
-            System.out.println("userdetail : "+ userDetails.getUsername());
-            AuthResponse tokens = authService.getTokens(userDetails);
+            AuthResponse authResponse = authService.getTokens(userDetails);
 
-            System.out.println("getting tokens : "+ tokens.getAccessToken());
-            Cookie refreshTokenCookie = new Cookie("refresh_token", tokens.getRefreshToken());
+            Cookie refreshTokenCookie = new Cookie("refreshToken", authResponse.getRefreshToken());
             refreshTokenCookie.setHttpOnly(true);
-            refreshTokenCookie.setSecure(true);
+            refreshTokenCookie.setSecure(false);
             refreshTokenCookie.setPath("/");
             refreshTokenCookie.setMaxAge(7 * 24 * 60 * 60);
+            String cookieHeader = String.format("%s=%s; Max-Age=%d; Path=%s; HttpOnly; SameSite=None",
+                    refreshTokenCookie.getName(),
+                    refreshTokenCookie.getValue(),
+                    refreshTokenCookie.getMaxAge(),
+                    refreshTokenCookie.getPath()
+            );
+            response.setHeader("Set-Cookie", cookieHeader);
 
-            response.addCookie(refreshTokenCookie);
-
-            return ResponseEntity.ok(new AuthResponse(tokens.getAccessToken(),null));
+            return ResponseEntity.ok(authResponse);
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
-
     }
 
     @PostMapping("/refresh")
@@ -69,19 +73,18 @@ public class AuthController {
                     UserDetails userDetails = userDetailsService.loadUserByUsername(username);
                     if(jwtUtil.validateRefreshToken(refreshToken, userDetails.getUsername())) {
                         String newAccessToken = jwtUtil.generateAccessToken(userDetails.getUsername());
-                        return ResponseEntity.ok(new AuthResponse(newAccessToken, null));
+                        return ResponseEntity.ok(new AuthResponse(null,newAccessToken, null));
                     } else {
-                        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid refresh token");
+                        return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).body("Invalid refresh token");
                     }
                 }
             }
         }
-        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).build();
     }
 
     @PostMapping("/register")
-    public ResponseEntity register(@RequestBody RegisterRequest registerRequest) {
-        System.out.println("registerRequest: " + registerRequest);
+    public ResponseEntity register(@Valid @RequestBody RegisterRequest registerRequest) {
         try {
             authService.register(registerRequest);
             return new ResponseEntity(HttpStatus.CREATED);
@@ -90,29 +93,16 @@ public class AuthController {
         }
     }
 
+    @GetMapping("/logout")
     public ResponseEntity logout(HttpServletResponse response, HttpServletRequest request) {
-        Cookie[] cookies = request.getCookies();
-        if (cookies != null) {
-            for (Cookie cookie : cookies) {
-                if (cookie.getName().equals("refreshToken")) {
-                    String refreshToken = cookie.getValue();
-                    try {
-                        authService.logout(refreshToken);
-                    } catch (Exception e) {
-                        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(e.getMessage());
-                    }
 
-                    Cookie refreshTokenCookie = new Cookie("refreshToken", null);
-                    refreshTokenCookie.setHttpOnly(true);
-                    refreshTokenCookie.setSecure(true);
-                    refreshTokenCookie.setPath("/");
-                    refreshTokenCookie.setMaxAge(0); // 즉시 만료
-                    response.addCookie(refreshTokenCookie);
+        Cookie refreshTokenCookie = new Cookie("refreshToken", null);
+        refreshTokenCookie.setHttpOnly(true);
+        refreshTokenCookie.setSecure(false);
+        refreshTokenCookie.setPath("/");
+        refreshTokenCookie.setMaxAge(0); // 즉시 만료
+        response.addCookie(refreshTokenCookie);
 
-                    return ResponseEntity.ok("Logged out successfully");
-                }
-            }
-        }
-        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("No refresh token found");
+        return ResponseEntity.ok("Logged out successfully");
     }
 }
