@@ -7,6 +7,8 @@ import com.sunniesfish.todo_app.auth.entity.Member;
 import com.sunniesfish.todo_app.global.exceptions.S3Exception;
 import com.sunniesfish.todo_app.global.service.S3ImageService;
 import lombok.AllArgsConstructor;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -22,6 +24,7 @@ public class MemberService {
 
     private final String PROFILE_IMG_PATH = "/images/member/profile/";
     private final String BG_IMG_PATH = "/images/member/bg/";
+    private final PasswordEncoder passwordEncoder;
 
 
     @Transactional
@@ -29,9 +32,15 @@ public class MemberService {
         Optional<Member> memberOptional = memberCRUDService.findByUsername(pwdChangeRequest.getUsername());
         if (memberOptional.isPresent()) {
             Member member = memberOptional.get();
-            if (member.getPassword().equals(pwdChangeRequest.getOldPassword())) {
-                memberCRUDService.update(pwdChangeRequest.getUsername(), Member.builder().password(pwdChangeRequest.getNewPassword()).build());
-            }
+
+             if(passwordEncoder.matches(pwdChangeRequest.getOldPassword(), member.getPassword())) {
+                 String encodedPassword = passwordEncoder.encode(pwdChangeRequest.getNewPassword());
+                memberCRUDService.update(pwdChangeRequest.getUsername(), Member.builder().username(pwdChangeRequest.getUsername()).password(encodedPassword).build());
+             } else {
+                 throw new IllegalAccessException("Old password does not match");
+             }
+
+
         } else {
             throw new IllegalAccessException("invalid password");
         }

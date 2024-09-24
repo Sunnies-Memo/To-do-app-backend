@@ -34,9 +34,15 @@ public class MemberController {
     @PutMapping("/password")
     public ResponseEntity changePassword(@RequestBody PwdChangeRequest pwdChangeRequest) {
         try {
+            System.out.println("==================in change password");
             Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
             String username = authentication.getName();
+            System.out.println("chng pwd username: " + username);
+            System.out.println("getUsername: " + pwdChangeRequest.getUsername());
+            System.out.println("old password: " + pwdChangeRequest.getOldPassword());
+            System.out.println("new password: " + pwdChangeRequest.getNewPassword());
             if(!username.equals(pwdChangeRequest.getUsername())) {
+                System.out.println("different username");
                 throw new IllegalAccessException("Not authorized");
             }
             memberService.changePassword(pwdChangeRequest);
