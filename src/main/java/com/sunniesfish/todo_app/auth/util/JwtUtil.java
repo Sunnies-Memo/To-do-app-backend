@@ -1,17 +1,14 @@
 package com.sunniesfish.todo_app.auth.util;
 
 import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
-import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import javax.crypto.SecretKey;
 import java.nio.charset.StandardCharsets;
-import java.security.Key;
 import java.util.*;
 import java.util.function.Function;
 
@@ -35,12 +32,7 @@ public class JwtUtil {
 
     public String generateAccessToken(String username) {
         // 1시간
-        System.out.println("generate access token");
         long ACCESS_TOKEN_EXPIRATION = 1000 * 60 * 60;
-        System.out.println("access token expiration: " + ACCESS_TOKEN_EXPIRATION);
-        System.out.println("ACCESS_TOKEN_SECRET: " + ACCESS_TOKEN_SECRET);
-        SecretKey secret = generateSecretKey(ACCESS_TOKEN_SECRET);
-        System.out.println("secret: " + Arrays.toString(secret.getEncoded()));
         String token = Jwts.builder()
                 .setSubject(username)
                 .setIssuedAt(new Date())
@@ -108,8 +100,6 @@ public class JwtUtil {
     private boolean validateToken(String token, String key, String username) {
 
         final String tokenUsername = extractUsername(token, key);
-        System.out.println("validate :  tokenUserName:"+tokenUsername+ "  username:"+username);
-        System.out.println( "isToken Expired"+isTokenExpired(token, key));
         return (tokenUsername.equals(username) && !isTokenExpired(token, key));
 
     }

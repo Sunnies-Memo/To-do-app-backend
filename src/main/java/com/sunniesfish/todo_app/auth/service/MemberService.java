@@ -7,7 +7,6 @@ import com.sunniesfish.todo_app.auth.entity.Member;
 import com.sunniesfish.todo_app.global.exceptions.S3Exception;
 import com.sunniesfish.todo_app.global.service.S3ImageService;
 import lombok.AllArgsConstructor;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;

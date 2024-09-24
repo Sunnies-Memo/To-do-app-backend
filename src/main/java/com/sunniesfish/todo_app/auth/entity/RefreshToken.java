@@ -3,7 +3,6 @@ package com.sunniesfish.todo_app.auth.entity;
 import jakarta.persistence.*;
 import lombok.*;
 
-import java.time.Instant;
 
 @Entity
 @Getter

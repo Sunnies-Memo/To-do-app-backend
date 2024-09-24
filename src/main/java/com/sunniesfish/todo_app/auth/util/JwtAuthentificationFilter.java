@@ -30,7 +30,6 @@ public class JwtAuthentificationFilter extends OncePerRequestFilter {
         String username = null;
         if (token != null) {
             username = jwtUtil.getUsernameFormAccessToken(token);
-            System.out.println("=========================in do filter username : "+username);
         }
         if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
             UserDetails userDetails = userDetailsService.loadUserByUsername(username);
@@ -38,9 +37,7 @@ public class JwtAuthentificationFilter extends OncePerRequestFilter {
                 JwtAuthentificationToken authentication = new JwtAuthentificationToken(
                         userDetails, userDetails.getAuthorities()
                 );
-                System.out.println("Authentication token: " + authentication.getPrincipal().toString());
                 authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
-                System.out.println("setting authentication detail : " + authentication.getName());
                 SecurityContextHolder.getContext().setAuthentication(authentication);
             }
         }

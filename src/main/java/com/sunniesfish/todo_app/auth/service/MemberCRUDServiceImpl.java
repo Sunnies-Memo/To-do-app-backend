@@ -26,7 +26,6 @@ public class MemberCRUDServiceImpl implements MemberCRUDService {
 
     @Override
     public Optional<Member> findByUsername(String username) {
-        System.out.println("여기까지 오긴옴??");
         return memberRepository.findByUsername(username);
     }
 

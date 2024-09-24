@@ -1,4 +1,4 @@
-package com.sunniesfish.melodybowl.global.error;
+package com.sunniesfish.todo_app.global.error;
 
 public class ErrorResponse {
     private String errorCode;

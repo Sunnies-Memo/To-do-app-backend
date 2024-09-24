@@ -25,18 +25,10 @@ public class AuthService {
 
     @Transactional
     public AuthResponse getTokens(UserDetails userDetails) {
-        System.out.println("getUsername: " + userDetails.getUsername());
         Optional<Member> memberOpt = memberCRUDService.findByUsername(userDetails.getUsername());
-        if (memberOpt.isPresent()) {
-            System.out.println("present : " + memberOpt.get().getUsername());
-        } else {
-            System.out.println("not present : " + userDetails.getUsername());
-        }
         return memberCRUDService.findByUsername(userDetails.getUsername())
                 .map(member -> {
-                    System.out.println("in map : " + member.getUsername());
                     String accessToken = jwtUtil.generateAccessToken(userDetails.getUsername());
-                    System.out.println("access token: " + accessToken);
                     //기존 RefreshToken이 존재하고 유효한지 확인
                     Optional<RefreshToken> existingRefreshToken = refreshTokenService.FindRefreshTokenByUsername(userDetails.getUsername());
                     if (existingRefreshToken.isPresent() &&
