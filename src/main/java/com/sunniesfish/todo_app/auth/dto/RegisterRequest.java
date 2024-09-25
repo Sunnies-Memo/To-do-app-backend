@@ -19,8 +19,4 @@ public class RegisterRequest {
     @Pattern(regexp = "^(?=.*[A-Za-z])(?=.*\\d)(?=.*[@$!%*?&])[A-Za-z\\d@$!%*?&]{7,}$",
             message = "Password must include letters, numbers, and special characters")
     private String password;
-
-    @Pattern(regexp = "^(https?:\\/\\/.*\\.(?:png|jpg|jpeg))$",
-            message = "Please provide a valid image URL (jpg, jpeg, png, gif)")
-    private String profileImg;
 }

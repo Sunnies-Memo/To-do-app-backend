@@ -62,22 +62,12 @@ public class AuthService {
             return null;
         } else {
             String password = passwordEncoder.encode(registerRequest.getPassword());
-            if(registerRequest.getProfileImg() != null) {
-                return memberCRUDService.create(
-                        Member.builder()
-                                .username(registerRequest.getUsername())
-                                .password(password)
-                                .profileImg(registerRequest.getProfileImg())
-                                .build()
-                );
-            } else {
-                return memberCRUDService.create(
-                        Member.builder()
-                                .username(registerRequest.getUsername())
-                                .password(password)
-                                .build()
-                );
-            }
+            return memberCRUDService.create(
+                    Member.builder()
+                            .username(registerRequest.getUsername())
+                            .password(password)
+                            .build()
+            );
         }
     }
 
