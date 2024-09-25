@@ -91,7 +91,12 @@ public class MemberService {
         if(userProfileUpdateRequest.getProfileImg() != null && !userProfileUpdateRequest.getProfileImg().isEmpty()) {
             newProfileImgPath = s3ImageService.upload(userProfileUpdateRequest.getProfileImg(), PROFILE_IMG_PATH);
         }
-        memberCRUDService.update(userProfileUpdateRequest.getUsername(), Member.builder().profileImg(newProfileImgPath).build());
+        Optional<Member> memberOptional = memberCRUDService.findByUsername(userProfileUpdateRequest.getUsername());
+        if(memberOptional.isPresent()) {
+            Member member = memberOptional.get();
+            member.setProfileImg(newProfileImgPath);
+            memberCRUDService.update(userProfileUpdateRequest.getUsername(),member);
+        }
         return newProfileImgPath;
     }
 
@@ -101,7 +106,12 @@ public class MemberService {
         if(userProfileUpdateRequest.getBgImg() != null && !userProfileUpdateRequest.getBgImg().isEmpty()) {
             newBgImgPath = s3ImageService.upload(userProfileUpdateRequest.getBgImg(), BG_IMG_PATH);
         }
-        memberCRUDService.update(userProfileUpdateRequest.getUsername(), Member.builder().bgImg(newBgImgPath).build());
+        Optional<Member> memberOptional = memberCRUDService.findByUsername(userProfileUpdateRequest.getUsername());
+        if(memberOptional.isPresent()) {
+            Member member = memberOptional.get();
+            member.setBgImg(newBgImgPath);
+            memberCRUDService.update(userProfileUpdateRequest.getUsername(),member);
+        }
         return newBgImgPath;
     }
 }

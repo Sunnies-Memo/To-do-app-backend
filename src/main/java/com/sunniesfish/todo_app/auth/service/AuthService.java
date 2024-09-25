@@ -57,7 +57,6 @@ public class AuthService {
     @Transactional
     public Member register(RegisterRequest registerRequest) {
         Optional<Member> memberOptional = memberCRUDService.findByUsername(registerRequest.getUsername());
-
         if (memberOptional.isPresent()) {
             return null;
         } else {

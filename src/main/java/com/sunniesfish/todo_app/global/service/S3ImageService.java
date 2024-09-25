@@ -1,7 +1,6 @@
 package com.sunniesfish.todo_app.global.service;
 
 import com.amazonaws.services.s3.AmazonS3;
-import com.amazonaws.services.s3.model.CannedAccessControlList;
 import com.amazonaws.services.s3.model.DeleteObjectRequest;
 import com.amazonaws.services.s3.model.ObjectMetadata;
 import com.amazonaws.services.s3.model.PutObjectRequest;
@@ -43,7 +42,7 @@ public class S3ImageService {
     }
 
     private String uploadImage(MultipartFile image, String key) throws S3Exception {
-        this.validateImageFileExtention(image.getOriginalFilename());
+        this.validateImageFileExtention(Objects.requireNonNull(image.getOriginalFilename()));
         try {
             return this.uploadImageToS3(image, key);
         } catch (IOException e) {
@@ -90,8 +89,7 @@ public class S3ImageService {
         //이미지 업로드
         try{
             PutObjectRequest putObjectRequest =
-                    new PutObjectRequest(bucketName, s3FileName, byteArrayInputStream, metadata)
-                            .withCannedAcl(CannedAccessControlList.PublicRead);
+                    new PutObjectRequest(bucketName, s3FileName, byteArrayInputStream, metadata);
             s3.putObject(putObjectRequest); // put image to S3
         }catch (Exception e){
             e.printStackTrace();

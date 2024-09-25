@@ -58,13 +58,17 @@ public class MemberController {
             if (userProfileUpdateRequest.getProfileImg().getSize() > 15 * 1024 * 1024) {
                 throw new IllegalAccessException("File is too large to upload");
             }
-            if (isAllowedFileType(userProfileUpdateRequest.getProfileImg().getContentType())) {
+            if (!isAllowedFileType(userProfileUpdateRequest.getProfileImg().getContentType())) {
                 throw new IllegalAccessException("Invalid image type");
             }
             String profileImg = memberService.uploadProfileImg(userProfileUpdateRequest);
-            return ResponseEntity.ok().body(profileImg);
-        } catch (S3Exception | IllegalAccessException e) {
+            return ResponseEntity.ok().build();
+        } catch (IllegalAccessException e) {
+            e.printStackTrace();
             return ResponseEntity.status(HttpStatus.LOCKED).build();
+        } catch (S3Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
         }
     }
 
