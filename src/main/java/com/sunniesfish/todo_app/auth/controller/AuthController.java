@@ -19,6 +19,8 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Arrays;
+
 
 @RestController
 @RequestMapping("/api/auth")
@@ -46,7 +48,7 @@ public class AuthController {
             refreshTokenCookie.setSecure(false);
             refreshTokenCookie.setPath("/");
             refreshTokenCookie.setMaxAge(7 * 24 * 60 * 60);
-            String cookieHeader = String.format("%s=%s; Max-Age=%d; Path=%s; HttpOnly; SameSite=None",
+            String cookieHeader = String.format("%s=%s; Max-Age=%d; Path=%s; HttpOnly; SameSite=None; Secure",
                     refreshTokenCookie.getName(),
                     refreshTokenCookie.getValue(),
                     refreshTokenCookie.getMaxAge(),
@@ -63,11 +65,11 @@ public class AuthController {
     @PostMapping("/refresh")
     public ResponseEntity refreshToken(HttpServletRequest request) {
         Cookie[] cookies = request.getCookies();
+        System.out.println("cookies: " + Arrays.toString(cookies));
         if (cookies != null) {
             for (Cookie cookie : cookies) {
                 if (cookie.getName().equals("refreshToken")) {
                     String refreshToken = cookie.getValue();
-
                     String username = jwtUtil.getUsernameFormRefreshToken(refreshToken);
                     UserDetails userDetails = userDetailsService.loadUserByUsername(username);
                     if(jwtUtil.validateRefreshToken(refreshToken, userDetails.getUsername())) {

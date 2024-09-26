@@ -33,7 +33,8 @@ public class AuthService {
                     Optional<RefreshToken> existingRefreshToken = refreshTokenService.FindRefreshTokenByUsername(userDetails.getUsername());
                     if (existingRefreshToken.isPresent() &&
                             jwtUtil.validateRefreshToken(existingRefreshToken.get().getRefreshToken(), userDetails.getUsername())) {
-                        return new AuthResponse(member,accessToken, null); // 새 RefreshToken 발급 필요 없음
+                        String refreshToken = existingRefreshToken.get().getRefreshToken();
+                        return new AuthResponse(member,accessToken, refreshToken); // 새 RefreshToken 발급 필요 없음
                     }
 
                     //기존 RefreshToken 삭제 후 새로 발급
