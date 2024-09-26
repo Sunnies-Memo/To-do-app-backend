@@ -101,8 +101,14 @@ public class AuthController {
         refreshTokenCookie.setHttpOnly(true);
         refreshTokenCookie.setSecure(false);
         refreshTokenCookie.setPath("/");
-        refreshTokenCookie.setMaxAge(0); // 즉시 만료
-        response.addCookie(refreshTokenCookie);
+        refreshTokenCookie.setMaxAge(7 * 24 * 60 * 60);
+        String cookieHeader = String.format("%s=%s; Max-Age=%d; Path=%s; HttpOnly; SameSite=None; Secure",
+                refreshTokenCookie.getName(),
+                refreshTokenCookie.getValue(),
+                refreshTokenCookie.getMaxAge(),
+                refreshTokenCookie.getPath()
+        );
+        response.setHeader("Set-Cookie", cookieHeader);
 
         return ResponseEntity.ok("Logged out successfully");
     }
