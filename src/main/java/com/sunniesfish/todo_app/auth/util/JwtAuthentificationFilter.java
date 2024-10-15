@@ -1,5 +1,6 @@
 package com.sunniesfish.todo_app.auth.util;
 
+import com.sunniesfish.todo_app.auth.dto.CustomUserDetails;
 import com.sunniesfish.todo_app.auth.service.CustomUserDetailService;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -8,6 +9,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import lombok.AllArgsConstructor;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -16,6 +18,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
+import java.util.ArrayList;
 
 @Component
 @AllArgsConstructor
@@ -32,7 +35,8 @@ public class JwtAuthentificationFilter extends OncePerRequestFilter {
             username = jwtUtil.getUsernameFormAccessToken(token);
         }
         if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
-            UserDetails userDetails = userDetailsService.loadUserByUsername(username);
+            UserDetails userDetails = new CustomUserDetails(username, new ArrayList<>());
+
             if (jwtUtil.validateAccessToken(token, userDetails.getUsername())){
                 JwtAuthentificationToken authentication = new JwtAuthentificationToken(
                         userDetails, userDetails.getAuthorities()
