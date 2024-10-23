@@ -29,6 +29,7 @@ public class ToDoController {
     @GetMapping("")
     public ResponseEntity getAll() {
         try {
+            System.out.println("///////////////////////////////////////////////////get all");
             Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
             String username = authentication.getName();
             List<BoardsDTO> boardsDTOList = toDoService.getAllBoards(username);

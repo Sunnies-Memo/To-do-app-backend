@@ -56,10 +56,10 @@ public class AuthService {
 
 
     @Transactional
-    public Member register(RegisterRequest registerRequest) {
+    public Member register(RegisterRequest registerRequest) throws IllegalAccessException {
         Optional<Member> memberOptional = memberCRUDService.findByUsername(registerRequest.getUsername());
         if (memberOptional.isPresent()) {
-            return null;
+            throw new IllegalAccessException("Username already exists");
         } else {
             String password = passwordEncoder.encode(registerRequest.getPassword());
             return memberCRUDService.create(

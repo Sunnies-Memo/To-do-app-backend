@@ -3,6 +3,7 @@ package com.sunniesfish.todo_app.auth.controller;
 import com.sunniesfish.todo_app.auth.dto.AuthRequest;
 import com.sunniesfish.todo_app.auth.dto.AuthResponse;
 import com.sunniesfish.todo_app.auth.dto.RegisterRequest;
+import com.sunniesfish.todo_app.auth.entity.Member;
 import com.sunniesfish.todo_app.auth.service.AuthService;
 import com.sunniesfish.todo_app.auth.util.JwtUtil;
 import jakarta.servlet.http.Cookie;
@@ -55,7 +56,6 @@ public class AuthController {
                     refreshTokenCookie.getPath()
             );
             response.setHeader("Set-Cookie", cookieHeader);
-
             return ResponseEntity.ok(authResponse);
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
@@ -64,6 +64,7 @@ public class AuthController {
 
     @PostMapping("/refresh")
     public ResponseEntity refreshToken(HttpServletRequest request) {
+        System.out.println("///////////////////////////////////////////////////////Refresh token");
         Cookie[] cookies = request.getCookies();
         System.out.println("cookies: " + Arrays.toString(cookies));
         if (cookies != null) {
@@ -87,10 +88,12 @@ public class AuthController {
     @PostMapping("/register")
     public ResponseEntity register(@Valid @RequestBody RegisterRequest registerRequest) {
         try {
-            authService.register(registerRequest);
+            Member member = authService.register(registerRequest);
             return new ResponseEntity(HttpStatus.CREATED);
         } catch (RuntimeException e) {
             return ResponseEntity.badRequest().body(e.getMessage());
+        } catch (IllegalAccessException e) {
+            return new ResponseEntity(HttpStatus.NOT_ACCEPTABLE);
         }
     }
 
