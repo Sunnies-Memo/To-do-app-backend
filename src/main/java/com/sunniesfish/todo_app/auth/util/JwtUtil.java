@@ -76,7 +76,6 @@ public class JwtUtil {
     }
 
     private Claims extractAllClaims(String token, String key) {
-        System.out.println("token: " + token);
         return Jwts.parserBuilder()
                 .setSigningKey(generateSecretKey(key))
                 .build()
@@ -99,8 +98,9 @@ public class JwtUtil {
     }
 
     private boolean validateToken(String token, String key, String username) {
-
+        System.out.println("validating token: " + username);
         final String tokenUsername = extractUsername(token, key);
+        System.out.println("tokenUsername: " + tokenUsername);
         return (tokenUsername.equals(username) && !isTokenExpired(token, key));
 
     }

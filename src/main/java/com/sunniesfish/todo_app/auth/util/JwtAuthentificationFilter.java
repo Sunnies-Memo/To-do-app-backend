@@ -28,35 +28,40 @@ public class JwtAuthentificationFilter extends OncePerRequestFilter {
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
+        System.out.println("////////////////////////////////////////------------IN FILTER");
+        System.out.println("Request Method: " + request.getMethod() + ", URL: " + request.getRequestURI());
         String token = getTokenFromRequest(request);
-        System.out.println("doFilterInternal---------------------------------------------------- ");
-        System.out.println("dofilter internal ======================== token: " + token);
         String username = null;
         if (token != null) {
+            System.out.println("token exist");
             username = jwtUtil.getUsernameFormAccessToken(token);
-            System.out.println("username is " + username);
         }
         if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
+            System.out.println("username exist");
+
             List<GrantedAuthority> authorities = new ArrayList<>();
             authorities.add(new SimpleGrantedAuthority("ROLE_USER"));
+            System.out.println("username : " + username + ", authorities : " + authorities);
             UserDetails userDetails = new CustomUserDetails(username, authorities);
 
             if (jwtUtil.validateAccessToken(token, userDetails.getUsername())){
+                System.out.println("Valid access token");
+
                 JwtAuthentificationToken authentication = new JwtAuthentificationToken(
                         userDetails, userDetails.getAuthorities()
                 );
                 authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
-                System.out.println("authentication token is " + authentication.getName());
                 SecurityContextHolder.getContext().setAuthentication(authentication);
             }
         }
+        System.out.println("Set authentication: " + SecurityContextHolder.getContext().getAuthentication());
+        System.out.println("///////////////////////////////////////==========OUT FILTER");
         filterChain.doFilter(request, response);
     }
 
     private String getTokenFromRequest(HttpServletRequest request) {
         String bearerToken = request.getHeader("Authorization");
         if (bearerToken != null && bearerToken.startsWith("Bearer ")) {
-            System.out.println("get token from Request-------------------------- bearerToken is " + bearerToken);
             return bearerToken.substring(7);
         }
         return null;
