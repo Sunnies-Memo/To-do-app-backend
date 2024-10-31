@@ -46,6 +46,7 @@ public class S3ImageService {
         try {
             return this.uploadImageToS3(image, key);
         } catch (IOException e) {
+            System.out.println("업로드 에러");
             throw new S3Exception("업로드 에러");
         }
     }
@@ -56,6 +57,7 @@ public class S3ImageService {
 
         // .이 없는경우 exception
         if (lastDotIndex == -1) {
+            System.out.println("잘못된 확장자");
             throw new S3Exception("잘못된 확장자");
         }
 
@@ -64,6 +66,7 @@ public class S3ImageService {
         List<String> allowedExtentionList = Arrays.asList("jpg", "jpeg", "png", "gif");
 
         if (!allowedExtentionList.contains(extention)) {
+            System.out.println("잘못된 확장자");
             throw new S3Exception("잘못된 확장자");
         }
     }

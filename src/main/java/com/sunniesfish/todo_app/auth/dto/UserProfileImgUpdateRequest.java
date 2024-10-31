@@ -1,2 +1,4 @@
-package com.sunniesfish.todo_app.auth.dto;public class UserProfileImgUpdateRequest {
+package com.sunniesfish.todo_app.auth.dto;
+
+public class UserProfileImgUpdateRequest {
 }

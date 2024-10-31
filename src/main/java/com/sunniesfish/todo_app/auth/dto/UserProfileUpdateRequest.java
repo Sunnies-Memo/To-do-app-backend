@@ -15,7 +15,6 @@ public class UserProfileUpdateRequest {
 
     private String username;
 
-    @NotBlank
     @Size(min = 7, max = 13, message = "Password must be between 7 and 13 characters")
     @Pattern(regexp = "^(?=.*[A-Za-z])(?=.*\\d)(?=.*[@$!%*?&])[A-Za-z\\d@$!%*?&]{7,}$",
             message = "Password must include letters, numbers, and special characters")
