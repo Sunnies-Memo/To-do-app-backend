@@ -51,7 +51,7 @@ public class ToDoController {
                 return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
             }
         } catch (Exception e) {
-            return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
@@ -60,14 +60,10 @@ public class ToDoController {
         try {
             Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
             String username = authentication.getName();
-            if(username.equals(boardUpdateRequest.getBoard().getUsername())){
-                return new ResponseEntity<>(
-                        toDoService.updateBoard(username, boardUpdateRequest),
-                        HttpStatus.OK
-                );
-            } else {
-                return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
-            }
+            return new ResponseEntity<>(
+                    toDoService.updateBoard(username, boardUpdateRequest),
+                    HttpStatus.OK
+            );
         } catch (Exception e) {
             return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
         }

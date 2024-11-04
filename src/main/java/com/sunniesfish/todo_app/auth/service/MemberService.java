@@ -21,8 +21,8 @@ public class MemberService {
     private final MemberCRUDService memberCRUDService;
     private final S3ImageService s3ImageService;
 
-    private final String PROFILE_IMG_PATH = "/images/member/profile/";
-    private final String BG_IMG_PATH = "/images/member/bg/";
+    private final String PROFILE_IMG_PATH = "images/member/profile/";
+    private final String BG_IMG_PATH = "images/member/bg/";
     private final PasswordEncoder passwordEncoder;
 
 
