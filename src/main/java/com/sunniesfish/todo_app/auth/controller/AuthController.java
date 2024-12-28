@@ -64,7 +64,6 @@ public class AuthController {
 
     @PostMapping("/refresh")
     public ResponseEntity refreshToken(HttpServletRequest request) {
-        System.out.println("///////////////////////////////////////////////////////Refresh token");
         Cookie[] cookies = request.getCookies();
         System.out.println("cookies: " + Arrays.toString(cookies));
         if (cookies != null) {
